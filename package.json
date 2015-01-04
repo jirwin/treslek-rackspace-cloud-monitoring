@@ -1,0 +1,17 @@
+{
+  "name": "treslek-rackspace-cloud-monitoring",
+  "version": "0.0.0",
+  "description": "A treslek plugin to handle and announce Rackspace Cloud Monitoring webhooks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "treslek",
+    "monitoring",
+    "cloud",
+    "rackspace"
+  ],
+  "author": "Justin Gallardo <justin.gallardo@gmail.com>",
+  "license": "MIT"
+}
