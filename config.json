@@ -1,0 +1,6 @@
+{
+  "paths": {
+    "cloudmonitoring": ["##treslek", "#treslek"]
+  },
+  "token": "foobar123"
+}
