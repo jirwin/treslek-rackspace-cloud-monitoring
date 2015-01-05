@@ -20,7 +20,9 @@ An example config:
   "paths": {
     "cloudmonitoring": ["##treslek", "#treslek"]
   },
-  "token": "foobar123"
+  "token": "foobar123",
+  "templateString": "{{entity.label || entity.id}} - {{details.state}}",
+  "disableStateColors": false
 }
 ```
 
@@ -30,3 +32,7 @@ webhook information.
 
 The `token` key is where you specify the secret token provided by
 Rackspace Cloud Monitoring for verifying authenticity.
+
+Use the `templateString` config to control the message that treslek outputs to the channel.
+
+Set `disableStateColors` to `true` if you don't want alarm states to be colored.
