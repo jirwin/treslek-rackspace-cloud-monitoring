@@ -1,4 +1,5 @@
 var redis = require('redis');
+var _ = require('underscore');
 var log = require('logmagic').local('treslek.raxcm');
 var sprintf = require('sprintf').sprintf;
 var colors = require('irc-colors');
@@ -13,6 +14,14 @@ var STATE_COLORS = {
   CRITICAL: colors.red,
   WARNING: colors.yellow
 };
+
+var templateString = '{{entity.label || entity.id}} - {{check.label || check.id}} - {{details.state}} - {{alarm.label || alarm.id}} - {{details.status}}';
+
+if (config.templateString) {
+  templateString = config.templateString;
+}
+
+var msgTemplate = _.template(templateString);
 
 /**
  * Return a state string with irc colors.
@@ -46,6 +55,10 @@ CloudMonitoring.prototype.listen = function(bot) {
         headers = {},
         output = '';
 
+    _.templateSettings = {
+      interpolate: /\{\{(.+?)\}\}/g
+    };
+
     ircChannels = ircChannels instanceof Array ? ircChannels : [ircChannels];
 
     try {
@@ -62,11 +75,11 @@ CloudMonitoring.prototype.listen = function(bot) {
       return;
     }
 
-    output = sprintf('%s %s %s - %s',
-                     body.entity.label || body.entity.id,
-                     getColoredState(body.details.state),
-                     body.check.label || body.check.id,
-                     body.details.status);
+    if (!config.disableStateColors) {
+      body.details.state = getColoredState(body.details.state);
+    }
+
+    output = msgTemplate(body);
 
     ircChannels.forEach(function(ircChannel) {
       bot.say(ircChannel, output);
