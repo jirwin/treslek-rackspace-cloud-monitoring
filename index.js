@@ -1,3 +1,4 @@
+var async = require('async');
 var redis = require('redis');
 var _ = require('underscore');
 var log = require('logmagic').local('treslek.raxcm');
@@ -27,6 +28,8 @@ if (config.templateString) {
 
 var msgTemplate = _.template(templateString);
 
+var subPatterns = [];
+
 /**
  * Return a state string with irc colors.
  * @return {String} IRC-colored string.
@@ -45,12 +48,13 @@ function getColoredState(state) {
  */
 var CloudMonitoring = function() {
   this.auto = ['listen'];
+  this.unload = ['unsubscribe'];
 };
 
 CloudMonitoring.prototype.listen = function(bot) {
-  redisClient = redis.createClient(bot.redisConf.port, bot.redisConf.host);
-
   var pattern = [bot.getWebhookChannel(), 'raxcm/*'].join(':');
+
+  redisClient = redis.createClient(bot.redisConf.port, bot.redisConf.host);
 
   redisClient.on("pmessage", function(pattern, channel, message) {
     var channelPath = channel.slice(bot.getWebhookChannel().length + 1).split('/')[1],
@@ -85,7 +89,20 @@ CloudMonitoring.prototype.listen = function(bot) {
       bot.say(ircChannel, output);
     });
   });
+
+  subPatterns.push(pattern);
   redisClient.psubscribe(pattern);
+};
+
+
+CloudMonitoring.prototype.unsubscribe = function(callback) {
+  delete require.cache[require.resolve('./config.json')];
+  async.forEach(subPatterns, function(pattern, callback) {
+    redisClient.punsubscribe(pattern, callback);
+  }, function(err) {
+    subPatterns = [];
+    callback(err);
+  });
 };
 
 exports.Plugin = CloudMonitoring;
