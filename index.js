@@ -15,6 +15,10 @@ var STATE_COLORS = {
   WARNING: colors.yellow
 };
 
+_.templateSettings = {
+  interpolate: /\{\{(.+?)\}\}/g
+};
+
 var templateString = '{{entity.label || entity.id}} - {{check.label || check.id}} - {{details.state}} - {{alarm.label || alarm.id}} - {{details.status}}';
 
 if (config.templateString) {
@@ -54,10 +58,6 @@ CloudMonitoring.prototype.listen = function(bot) {
         body = {},
         headers = {},
         output = '';
-
-    _.templateSettings = {
-      interpolate: /\{\{(.+?)\}\}/g
-    };
 
     ircChannels = ircChannels instanceof Array ? ircChannels : [ircChannels];
 
