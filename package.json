@@ -1,6 +1,6 @@
 {
   "name": "treslek-rackspace-cloud-monitoring",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A treslek plugin to handle and announce Rackspace Cloud Monitoring webhooks",
   "main": "index.js",
   "scripts": {
